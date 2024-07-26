@@ -1,0 +1,239 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    header("Location: login.html");
+    exit();
+}
+
+// Connect to the database to retrieve the user's full name
+$conn = new mysqli('localhost', 'root', '', 'onesevenbio');
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$userid = $_SESSION['userid'];
+$stmt = $conn->prepare("SELECT fullname, personality FROM userslist WHERE id = ?");
+$stmt->bind_param("i", $userid);
+$stmt->execute();
+$stmt->bind_result($fullname, $personality);
+$stmt->fetch();
+
+$stmt->close();
+$conn->close();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+	<link rel="stylesheet" href="per.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .wrapper,
+        .content {
+            position: relative;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .content {
+            overflow-x: hidden;
+        }
+
+        .content .section {
+            width: 100%;
+            height: 100vh;
+        }
+
+        .content .section.hero {
+            background-image: url(https://images.unsplash.com/photo-1589848315097-ba7b903cc1cc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .image-container {
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2;
+            perspective: 500px;
+            overflow: hidden;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            z-index: -1;
+        }
+
+        .welcome-info {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            color: white;
+            text-align: center;
+            opacity: 0; /* Start hidden */
+        }
+
+        
+
+        .welcome-info h1 {
+            font-size: 5em;
+            margin-bottom: 10px;
+			font-family: 'Pixelify Sans', sans-serif;
+            font-weight: 800;
+			padding:4%;
+			color:black;
+        }
+
+        .welcome-info p {
+            font-size: 3em;
+            margin-bottom: 20px;
+			font-family: 'Pixelify Sans', sans-serif;
+            font-weight: 400;
+			padding:4%;
+			color:black;
+        }
+
+        .welcome-info a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #45a049;
+			color:black;
+            text-decoration: none;
+            border-radius: 5px;
+
+        }
+
+        .welcome-info a:hover {
+            background-color:white;
+			color:black;
+			font-weight:bold;
+			
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="content">
+            <section class="section hero"></section>
+            
+                <div class="image-container">
+                    <img src="window.png" alt="image">
+                    <div class="welcome-info" id="welcome-info">
+                        <h1>Welcome</h1>
+                        <p>Your quiz personality is....... <br> Your Personality Type</p>
+                        <a href="../index.html">Home</a>
+						<a href="logout.php">Logout</a>
+						
+                    </div>
+                </div>
+			<div class="section" id="app">
+        <div class="container">
+            <card data-image="https://images.unsplash.com/photo-1479660656269-197ebb83b540?dpr=2&auto=compress,format&fit=crop&w=1199&h=798&q=80&cs=tinysrgb&crop=">
+                <template v-slot:header>
+                    <h1>Ranger for Land</h1>
+                </template>
+                <template v-slot:content>
+                    <p>Your love for the land we thrive in, and the ways of survival make you a Ranger. <br>In this ecosystem, you will pass by challenges on the land and tackle them to live more sustainably.</p>
+                </template>
+            </card>
+            <card data-image="https://images.unsplash.com/photo-1479659929431-4342107adfc1?dpr=2&auto=compress,format&fit=crop&w=1199&h=799&q=80&cs=tinysrgb&crop=">
+                <template v-slot:header>
+                    <h1>Ariel for Air</h1>
+                </template>
+                <template v-slot:content>
+                    <p>The air we breathe is getting worse with each passing day. <br>So, like an invisible yet crucial spirit, you will be navigating obstacles in the atmosphere to live a life that contributes to less air contamination, making the air around you less opaque each day.</p>
+                </template>
+            </card>
+            
+            <card data-image="https://images.unsplash.com/photo-1479621051492-5a6f9bd9e51a?dpr=2&auto=compress,format&fit=crop&w=1199&h=811&q=80&cs=tinysrgb&crop=">
+                <template v-slot:header>
+                    <h1>Poseidon for Water</h1>
+                </template>
+                <template v-slot:content>
+                    <p>With irresponsible garbage dumping and unlimited waste released into the water around us, clean water seems like an illusion.<> Therefore, your love for clean and fresh water has made you a part of our Poseidon Clan where you work towards making choices that reduce the filth in the water bodies around us.</p>
+                </template>
+            </card>
+        </div>
+    </div>
+
+    
+				
+    </div>
+	</div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/ScrollTrigger.min.js"></script>
+	<!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    
+	<script src="pers.js"></script>
+    <script>
+        console.clear();
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        window.addEventListener("load", () => {
+            gsap
+                .timeline({
+                    scrollTrigger: {
+                        trigger: ".wrapper",
+                        start: "top top",
+                        end: "+=150%",
+                        pin: true,
+                        scrub: true,
+                       
+                    }
+                })
+                .to("img", {
+                    scale: 2,
+                    z: 350,
+                    transformOrigin: "center center",
+                    ease: "power1.inOut"
+                })
+                .to(
+                    ".section.hero",
+                    {
+                        scale: 1.1,
+                        transformOrigin: "center center",
+                        ease: "power1.inOut"
+                    },
+                    "<"
+                )
+                .to("#welcome-info", {
+                    opacity: 2,
+                    ease: "power1.inOut"
+                }, "<"); 
+        });
+    </script>
+</body>
+</html>
